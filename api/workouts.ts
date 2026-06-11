@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { getSQL, setCORSHeaders } from './_db'
+import { getSQL, setCORSHeaders } from './_db.js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCORSHeaders(res)
