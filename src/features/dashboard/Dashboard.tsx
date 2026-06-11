@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { Workout, BodyWeightEntry, MuscleGroup } from '@/lib/types'
+import { Workout, BodyWeightEntry } from '@/lib/types'
 import { getExercise } from '@/lib/exercises'
-import { isThisWeek, isThisMonth, getWorkoutVolume, getWorkoutDuration, formatDuration, getVolumeByMuscle, relativeTime, getMuscleFrequency7d, detectDeloadNeed } from '@/lib/utils'
+import { isThisWeek, isThisMonth, getWorkoutVolume, getWorkoutDuration, formatDuration, getVolumeByMuscle, relativeTime, detectDeloadNeed } from '@/lib/utils'
 import { WorkoutCalendar } from './WorkoutCalendar'
 import { LoadingSpinner } from '@/components/Spinner'
 
@@ -12,9 +12,6 @@ interface Props {
   loading?: boolean
 }
 
-const MIN_WEEKLY_SETS: Record<MuscleGroup, number> = {
-  chest: 6, back: 6, biceps: 4, triceps: 4, abs: 3, shoulders: 6,
-}
 
 export function Dashboard({ workouts, bodyWeight, onShowTemplates, loading = false }: Props) {
   const stats = useMemo(() => {
@@ -35,15 +32,6 @@ export function Dashboard({ workouts, bodyWeight, onShowTemplates, loading = fal
     return { time: last.startTime, duration: getWorkoutDuration(last), muscles: Array.from(muscles), exerciseCount: last.exercises.length }
   }, [workouts])
 
-  const muscleAlerts = useMemo(() => {
-    const freq = getMuscleFrequency7d(workouts)
-    const alerts: { muscle: MuscleGroup; current: number; target: number }[] = []
-    for (const [muscle, target] of Object.entries(MIN_WEEKLY_SETS)) {
-      const current = freq[muscle as MuscleGroup]
-      if (current < target) alerts.push({ muscle: muscle as MuscleGroup, current, target })
-    }
-    return alerts
-  }, [workouts])
 
   const deload = useMemo(() => detectDeloadNeed(workouts), [workouts])
 
@@ -86,22 +74,6 @@ export function Dashboard({ workouts, bodyWeight, onShowTemplates, loading = fal
         </div>
       )}
 
-      {!loading && muscleAlerts.length > 0 && (
-        <div className="glass rounded-2xl p-4">
-          <h3 className="text-[10px] text-muted uppercase tracking-[0.12em] mb-3">Fréquence musculaire (7j)</h3>
-          <div className="space-y-2.5">
-            {muscleAlerts.map(alert => (
-              <div key={alert.muscle} className="flex items-center justify-between">
-                <span className="text-[13px] capitalize text-white/90">{alert.muscle}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-muted tabular-nums">{alert.current}/{alert.target} séries</span>
-                  <span className="text-[9px] font-bold text-danger bg-danger/10 px-1.5 py-0.5 rounded border border-danger/15">EN RETARD</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {!loading && <div className="grid grid-cols-2 gap-3">
         <GlassCard label="Cette semaine" value={stats.weekCount.toString()} unit="séances" gold />

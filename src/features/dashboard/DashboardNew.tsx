@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { Workout, BodyWeightEntry, MuscleGroup } from '@/lib/types'
+import { Workout, BodyWeightEntry } from '@/lib/types'
 import { getExercise } from '@/lib/exercises'
-import { isThisWeek, isThisMonth, getWorkoutVolume, getWorkoutDuration, formatDuration, getVolumeByMuscle, relativeTime, getMuscleFrequency7d } from '@/lib/utils'
+import { isThisWeek, isThisMonth, getWorkoutVolume, getWorkoutDuration, formatDuration, getVolumeByMuscle, relativeTime } from '@/lib/utils'
 import { WorkoutCalendar } from './WorkoutCalendar'
 import { LoadingSpinner } from '@/components/Spinner'
 import { LazyBackground } from '@/components/LazyImage'
@@ -43,31 +43,6 @@ export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = 
     }
   }, [workouts])
 
-  const muscleStatus = useMemo(() => {
-    const freq = getMuscleFrequency7d(workouts)
-    const now = Date.now()
-    const result: { muscle: MuscleGroup; daysSince: number; status: 'ok' | 'warning' | 'critical' }[] = []
-
-    const muscleGroups: MuscleGroup[] = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'abs']
-
-    for (const muscle of muscleGroups) {
-      const lastWorkout = workouts.find(w =>
-        w.exercises.some(ex => getExercise(ex.exerciseId)?.muscleGroup === muscle)
-      )
-
-      if (!lastWorkout) continue
-
-      const daysSince = Math.floor((now - lastWorkout.startTime) / (24 * 60 * 60 * 1000))
-      let status: 'ok' | 'warning' | 'critical' = 'ok'
-
-      if (daysSince >= 8) status = 'critical'
-      else if (daysSince >= 5) status = 'warning'
-
-      result.push({ muscle, daysSince, status })
-    }
-
-    return result.sort((a, b) => b.daysSince - a.daysSince)
-  }, [workouts])
 
   const bodyTrend = useMemo(() => {
     if (bodyWeight.length === 0) return null
@@ -78,7 +53,7 @@ export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = 
     return { current: latest.weight, weekAvg: avg, change }
   }, [bodyWeight])
 
-  const userName = "Utilisateur" // Tu peux le stocker dans localStorage ou un context
+  const userName = "Ilyes"
 
   return (
     <div className="pb-24 animate-fade-in">
@@ -141,121 +116,6 @@ export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = 
         </section>
       )}
 
-      {/* Carte musculaire */}
-      {!loading && <section className="px-5 mt-7">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-[16px] font-bold tracking-tight">Carte musculaire</h3>
-          <span className="text-[12px] font-semibold text-danger whitespace-nowrap">
-            {muscleStatus.filter(m => m.status !== 'ok').length} à rééquilibrer
-          </span>
-        </div>
-        <div
-          className="rounded-4xl ring-1 ring-white/5 p-4 relative overflow-hidden"
-          style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80&auto=format&fit=crop&h=700')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center top'
-          }}
-        >
-          <div className="absolute inset-0 bg-black/72"></div>
-
-          {/* Schéma corporel */}
-          <div className="relative rounded-3xl bg-black/40 backdrop-blur-sm px-4 pt-4 pb-3 flex items-end justify-center gap-7">
-            {/* SVG Face */}
-            <div className="flex flex-col items-center gap-2">
-              <svg viewBox="0 0 130 248" className="h-[230px] w-auto" fill="none">
-                <circle cx="65" cy="20" r="12" fill="#2A322C"/>
-                <rect x="59" y="30" width="12" height="9" rx="3" fill="#2A322C"/>
-                <path d="M48 56 Q48 50 54 49 H76 Q82 50 82 56 L78 104 Q77 110 71 110 H59 Q53 110 52 104 Z" fill="#222a25"/>
-                <path d="M53 106 H77 L73 122 Q69 126 65 126 Q61 126 57 122 Z" fill="#222a25"/>
-
-                {/* Jambes */}
-                <rect x="49" y="120" width="14" height="55" rx="7" fill={getBodyPartColor('legs', muscleStatus)}/>
-                <rect x="67" y="120" width="14" height="55" rx="7" fill={getBodyPartColor('legs', muscleStatus)}/>
-                <rect x="50" y="177" width="12" height="50" rx="6" fill={getBodyPartColor('legs', muscleStatus)}/>
-                <rect x="68" y="177" width="12" height="50" rx="6" fill={getBodyPartColor('legs', muscleStatus)}/>
-
-                {/* Épaules + bras */}
-                <ellipse cx="44" cy="52" rx="12" ry="10" fill={getBodyPartColor('shoulders', muscleStatus)}/>
-                <ellipse cx="86" cy="52" rx="12" ry="10" fill={getBodyPartColor('shoulders', muscleStatus)}/>
-                <rect x="28" y="56" width="11" height="36" rx="5.5" fill={getBodyPartColor('arms', muscleStatus)}/>
-                <rect x="91" y="56" width="11" height="36" rx="5.5" fill={getBodyPartColor('arms', muscleStatus)}/>
-                <rect x="29" y="92" width="10" height="30" rx="5" fill={getBodyPartColor('arms', muscleStatus)}/>
-                <rect x="91" y="92" width="10" height="30" rx="5" fill={getBodyPartColor('arms', muscleStatus)}/>
-
-                {/* Pectoraux */}
-                <rect x="50" y="46" width="14" height="13" rx="6" fill={getBodyPartColor('chest', muscleStatus)}/>
-                <rect x="66" y="46" width="14" height="13" rx="6" fill={getBodyPartColor('chest', muscleStatus)}/>
-
-                {/* Abdos */}
-                <g stroke="#2f382f" strokeWidth="2" strokeLinecap="round">
-                  <line x1="65" y1="64" x2="65" y2="102"/>
-                  <line x1="57" y1="76" x2="73" y2="76"/>
-                  <line x1="57" y1="88" x2="73" y2="88"/>
-                </g>
-              </svg>
-              <span className="text-[11px] font-bold text-white/60">Face</span>
-            </div>
-
-            {/* SVG Dos */}
-            <div className="flex flex-col items-center gap-2">
-              <svg viewBox="0 0 130 248" className="h-[230px] w-auto" fill="none">
-                <circle cx="65" cy="20" r="12" fill="#2A322C"/>
-                <rect x="59" y="30" width="12" height="9" rx="3" fill="#2A322C"/>
-                <path d="M48 56 Q48 50 54 49 H76 Q82 50 82 56 L78 104 Q77 110 71 110 H59 Q53 110 52 104 Z" fill="#222a25"/>
-                <path d="M53 106 H77 L73 122 Q69 126 65 126 Q61 126 57 122 Z" fill="#222a25"/>
-
-                {/* Ischios + mollets */}
-                <rect x="49" y="120" width="14" height="55" rx="7" fill={getBodyPartColor('legs', muscleStatus)}/>
-                <rect x="67" y="120" width="14" height="55" rx="7" fill={getBodyPartColor('legs', muscleStatus)}/>
-                <rect x="50" y="177" width="12" height="50" rx="6" fill={getBodyPartColor('legs', muscleStatus)}/>
-                <rect x="68" y="177" width="12" height="50" rx="6" fill={getBodyPartColor('legs', muscleStatus)}/>
-
-                {/* Épaules + bras */}
-                <ellipse cx="44" cy="52" rx="12" ry="10" fill={getBodyPartColor('shoulders', muscleStatus)}/>
-                <ellipse cx="86" cy="52" rx="12" ry="10" fill={getBodyPartColor('shoulders', muscleStatus)}/>
-                <rect x="28" y="56" width="11" height="36" rx="5.5" fill={getBodyPartColor('arms', muscleStatus)}/>
-                <rect x="91" y="56" width="11" height="36" rx="5.5" fill={getBodyPartColor('arms', muscleStatus)}/>
-                <rect x="29" y="92" width="10" height="30" rx="5" fill={getBodyPartColor('arms', muscleStatus)}/>
-                <rect x="91" y="92" width="10" height="30" rx="5" fill={getBodyPartColor('arms', muscleStatus)}/>
-
-                {/* Dos */}
-                <path d="M55 43 Q65 39 75 43 L72 53 Q65 50 58 53 Z" fill={getBodyPartColor('back', muscleStatus)}/>
-                <path d="M52 55 H78 L74 89 Q65 95 56 89 Z" fill={getBodyPartColor('back', muscleStatus)}/>
-
-                {/* Lombaires */}
-                <rect x="56" y="91" width="18" height="15" rx="4" fill="#222a25"/>
-              </svg>
-              <span className="text-[11px] font-bold text-white/60">Dos</span>
-            </div>
-          </div>
-
-          {/* Status par muscle */}
-          <div className="relative flex flex-wrap gap-2 mt-3.5">
-            {muscleStatus.map(({ muscle, daysSince, status }) => (
-              <span
-                key={muscle}
-                className={`flex items-center gap-1.5 text-[11.5px] font-semibold px-2.5 py-1.5 rounded-full whitespace-nowrap ${
-                  status === 'ok' ? 'text-white/70 bg-surface-light' :
-                  status === 'warning' ? 'text-primary bg-primary/12' :
-                  'text-danger bg-danger/12'
-                }`}
-              >
-                <span className={`w-2 h-2 rounded-full ${
-                  status === 'ok' ? 'bg-primary' :
-                  status === 'warning' ? 'bg-primary' :
-                  'bg-danger animate-pulse'
-                }`}></span>
-                {muscle === 'chest' && 'Pectoraux'}
-                {muscle === 'back' && 'Dos'}
-                {muscle === 'shoulders' && 'Épaules'}
-                {(muscle === 'biceps' || muscle === 'triceps') && 'Bras'}
-                {status !== 'ok' && ` · ${daysSince}j`}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>}
 
       {/* Stats */}
       {!loading && <section className="px-5 mt-7">
@@ -304,7 +164,7 @@ export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = 
               </svg>
             </div>
             <p className="text-[30px] font-extrabold tracking-tight leading-none">
-              {Math.floor(stats.totalTime / 60)}<span className="text-[14px] text-white/60"> h</span>
+              {Math.floor(stats.totalTime / (60 * 60 * 1000))}<span className="text-[14px] text-white/60"> h</span>
             </p>
             <p className="text-muted text-[12px] font-semibold mt-1.5">temps total</p>
           </div>
@@ -423,7 +283,7 @@ export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = 
           <h3 className="text-[16px] font-bold tracking-tight">Mes programmes</h3>
           <button
             onClick={onShowTemplates}
-            className="text-primary text-[13px] font-bold min-h-[44px] flex items-center whitespace-nowrap"
+            className="text-primary text-[13px] font-bold min-h-[44px] flex items-center whitespace-nowrap tap-scale relative z-10"
           >
             Voir tout
           </button>
@@ -445,7 +305,7 @@ export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = 
               <p className="text-muted text-[12.5px] font-semibold mt-0.5">Personnalise ton entraînement</p>
               <button
                 onClick={onShowTemplates}
-                className="mt-4 w-full h-12 rounded-2xl bg-primary text-black text-[14px] font-bold flex items-center justify-center gap-2"
+                className="mt-4 w-full h-12 rounded-2xl bg-primary text-black text-[14px] font-bold flex items-center justify-center gap-2 tap-scale relative z-10"
               >
                 Commencer
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -460,28 +320,3 @@ export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = 
   )
 }
 
-// Helper pour obtenir la couleur du body part selon le status
-function getBodyPartColor(part: 'chest' | 'back' | 'shoulders' | 'arms' | 'legs', muscleStatus: any[]): string {
-  const mapping: Record<string, MuscleGroup[]> = {
-    chest: ['chest'],
-    back: ['back'],
-    shoulders: ['shoulders'],
-    arms: ['biceps', 'triceps'],
-    legs: ['abs'] // Pas de jambes dans les données actuelles, on met abs par défaut
-  }
-
-  const muscles = mapping[part]
-  const statuses = muscleStatus.filter(m => muscles.includes(m.muscle))
-
-  if (statuses.length === 0) return '#2A322C' // Neutre
-
-  const worstStatus = statuses.reduce((worst, curr) => {
-    if (curr.status === 'critical') return curr
-    if (curr.status === 'warning' && worst.status !== 'critical') return curr
-    return worst
-  }, statuses[0])
-
-  if (worstStatus.status === 'critical') return '#F2BDB0' // Pêche
-  if (worstStatus.status === 'warning') return '#E7C98A' // Ambre
-  return '#9FE6C4' // Menthe (ok)
-}

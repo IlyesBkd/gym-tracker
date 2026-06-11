@@ -364,7 +364,7 @@ export function WorkoutScreenComplete({
   // No workout active
   if (!workout) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 pb-24">
         <div className="text-center space-y-6">
           <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center mx-auto">
             <span className="text-5xl">💪</span>
@@ -483,7 +483,7 @@ export function WorkoutScreenComplete({
       )}
 
       {/* Scroll zone */}
-      <div className="flex-1 overflow-y-auto pb-32">
+      <div className="flex-1 overflow-y-auto pb-40">
         {/* Weight Reminder */}
         {onNavigateToBodyWeight && (
           <div className="px-5 mt-5">
@@ -567,7 +567,7 @@ export function WorkoutScreenComplete({
       </div>
 
       {/* Bottom FAB + Terminer */}
-      <div className="absolute bottom-0 inset-x-0 bg-black/90 backdrop-blur-xl border-t border-white/10 px-4 pt-3 pb-8 flex items-center gap-3 shrink-0">
+      <div className="absolute bottom-16 inset-x-0 bg-black/90 backdrop-blur-xl border-t border-white/10 px-4 pt-3 pb-3 flex items-center gap-3 shrink-0">
         <button
           onClick={() => setShowPicker(true)}
           className="w-14 h-14 rounded-2xl bg-surface-light ring-1 ring-white/10 flex items-center justify-center shrink-0 tap-scale"

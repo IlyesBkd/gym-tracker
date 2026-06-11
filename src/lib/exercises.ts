@@ -5,9 +5,7 @@ export const EXERCISES: Exercise[] = [
   // Pectoraux
   { id: 'push-ups', name: 'Pompes', muscleGroup: 'chest', type: 'compound' },
   { id: 'pec-fly', name: 'Pec deck (butterfly)', muscleGroup: 'chest', type: 'isolation' },
-  { id: 'dumbbell-fly', name: 'Pec fly haltères', muscleGroup: 'chest', type: 'isolation' },
   { id: 'dumbbell-decline-fly', name: 'Écarté décliné haltères', muscleGroup: 'chest', type: 'isolation' },
-  { id: 'cable-fly', name: 'Pec fly poulie', muscleGroup: 'chest', type: 'isolation' },
   { id: 'assisted-bench-press', name: 'Développé couché assisté', muscleGroup: 'chest', type: 'compound' },
   { id: 'assisted-incline-bench', name: 'Développé incliné assisté', muscleGroup: 'chest', type: 'compound' },
   { id: 'chest-press', name: 'Chest press', muscleGroup: 'chest', type: 'compound' },

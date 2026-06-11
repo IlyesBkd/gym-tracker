@@ -40,14 +40,14 @@ export function BodyWeightScreenNew({ entries, onSave, onDelete }: Props) {
   }
 
   return (
-    <div className="p-4 pb-24 space-y-6 animate-fade-in">
+    <div className="p-4 pb-24 space-y-6 animate-fade-in overflow-x-hidden">
       <h1 className="text-[26px] font-extrabold text-white pt-2 tracking-tight">Poids corporel</h1>
 
       {/* Quick add */}
       <div className="rounded-4xl bg-surface p-5 ring-1 ring-white/5">
         <p className="text-[13px] font-semibold text-muted uppercase tracking-wider mb-3">Ajouter une pesée</p>
         <div className="flex gap-3">
-          <div className="flex-1 bg-black rounded-2xl px-4 py-4 ring-1 ring-white/10 flex items-center">
+          <div className="flex-1 min-w-0 bg-black rounded-2xl px-4 py-4 ring-1 ring-white/10 flex items-center">
             <input
               type="number"
               inputMode="decimal"
@@ -55,10 +55,10 @@ export function BodyWeightScreenNew({ entries, onSave, onDelete }: Props) {
               value={weight}
               onChange={e => setWeight(e.target.value)}
               placeholder="75.5"
-              className="flex-1 bg-transparent text-[28px] font-extrabold text-white tabular-nums placeholder:text-muted/50 focus:outline-none"
-              style={{ appearance: 'textfield' }}
+              className="flex-1 min-w-0 bg-transparent text-[28px] font-extrabold text-white tabular-nums placeholder:text-muted/50 focus:outline-none"
+              style={{ appearance: 'textfield', width: '100%' }}
             />
-            <span className="text-[14px] text-white/60 font-semibold ml-2">kg</span>
+            <span className="text-[14px] text-white/60 font-semibold ml-2 shrink-0">kg</span>
           </div>
           <button
             onClick={add}

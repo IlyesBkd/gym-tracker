@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { WorkoutTemplate } from '@/lib/types'
 import { getExercise } from '@/lib/exercises'
+import { TemplateEditor } from './TemplateEditor'
 
 interface Props {
   templates: WorkoutTemplate[]
@@ -9,11 +11,23 @@ interface Props {
 }
 
 export function TemplatesScreenNew({ templates, onSave, onDelete, onStart }: Props) {
+  const [editing, setEditing] = useState(false)
+
+  if (editing) {
+    return (
+      <TemplateEditor
+        template={null}
+        onSave={(t) => { onSave(t); setEditing(false) }}
+        onBack={() => setEditing(false)}
+      />
+    )
+  }
+
   return (
     <div className="p-4 pb-24 space-y-6 animate-fade-in">
       <div className="flex items-center justify-between pt-2">
         <h1 className="text-[26px] font-extrabold text-white tracking-tight">Programmes</h1>
-        <button className="h-12 px-4 rounded-2xl bg-primary text-black text-[14px] font-extrabold tap-scale">
+        <button onClick={() => setEditing(true)} className="h-12 px-4 rounded-2xl bg-primary text-black text-[14px] font-extrabold tap-scale">
           <span className="text-[16px] mr-1">+</span> Nouveau
         </button>
       </div>
@@ -22,7 +36,7 @@ export function TemplatesScreenNew({ templates, onSave, onDelete, onStart }: Pro
         <div className="flex flex-col items-center justify-center py-20">
           <div className="text-6xl mb-4 opacity-30">📋</div>
           <p className="text-muted text-center mb-6">Aucun programme enregistré</p>
-          <button className="h-14 px-8 rounded-2xl bg-primary text-black text-[16px] font-extrabold tap-scale">
+          <button onClick={() => setEditing(true)} className="h-14 px-8 rounded-2xl bg-primary text-black text-[16px] font-extrabold tap-scale">
             Créer mon premier programme
           </button>
         </div>
