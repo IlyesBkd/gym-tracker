@@ -83,15 +83,15 @@ export function SetRow({ index, set, onChange, onRemove }: Props) {
         </div>
       </div>
 
-      {/* Weight + Reps */}
-      <div className="flex gap-4">
+      {/* Weight + Reps — two equal columns, always visible */}
+      <div className="grid grid-cols-2 gap-2">
         {/* Weight column */}
-        <div className="flex-1">
-          <p className="text-[9px] text-muted uppercase tracking-[0.15em] text-center mb-1.5 font-medium">Poids (kg)</p>
-          <div className="flex items-center gap-1.5">
+        <div>
+          <p className="text-[9px] text-muted uppercase tracking-[0.12em] text-center mb-1.5 font-medium">Poids (kg)</p>
+          <div className="flex items-center gap-1">
             <button
               onClick={() => stepWeight(-2.5)}
-              className="stepper-btn w-11 h-12 rounded-xl flex items-center justify-center text-white/80 text-lg font-light tap-scale active:bg-white/10"
+              className="stepper-btn w-9 h-11 rounded-xl flex items-center justify-center text-white/80 text-lg font-light tap-scale active:bg-white/10 flex-shrink-0"
             >
               −
             </button>
@@ -101,11 +101,11 @@ export function SetRow({ index, set, onChange, onRemove }: Props) {
               value={weight}
               onChange={e => setWeight(e.target.value)}
               onBlur={() => commit('weight', weight)}
-              className="flex-1 h-12 bg-black/50 border border-primary/10 rounded-xl text-center text-[22px] font-bold text-white tabular-nums focus:outline-none focus:border-primary/40 transition-colors"
+              className="w-0 flex-1 h-11 bg-black/50 border border-primary/10 rounded-xl text-center text-xl font-bold text-white tabular-nums focus:outline-none focus:border-primary/40 transition-colors min-w-0"
             />
             <button
               onClick={() => stepWeight(2.5)}
-              className="stepper-btn w-11 h-12 rounded-xl flex items-center justify-center text-white/80 text-lg font-light tap-scale active:bg-white/10"
+              className="stepper-btn w-9 h-11 rounded-xl flex items-center justify-center text-white/80 text-lg font-light tap-scale active:bg-white/10 flex-shrink-0"
             >
               +
             </button>
@@ -113,12 +113,12 @@ export function SetRow({ index, set, onChange, onRemove }: Props) {
         </div>
 
         {/* Reps column */}
-        <div className="flex-1">
-          <p className="text-[9px] text-muted uppercase tracking-[0.15em] text-center mb-1.5 font-medium">Reps</p>
-          <div className="flex items-center gap-1.5">
+        <div>
+          <p className="text-[9px] text-muted uppercase tracking-[0.12em] text-center mb-1.5 font-medium">Reps</p>
+          <div className="flex items-center gap-1">
             <button
               onClick={() => stepReps(-1)}
-              className="stepper-btn w-11 h-12 rounded-xl flex items-center justify-center text-white/80 text-lg font-light tap-scale active:bg-white/10"
+              className="stepper-btn w-9 h-11 rounded-xl flex items-center justify-center text-white/80 text-lg font-light tap-scale active:bg-white/10 flex-shrink-0"
             >
               −
             </button>
@@ -128,11 +128,11 @@ export function SetRow({ index, set, onChange, onRemove }: Props) {
               value={reps}
               onChange={e => setReps(e.target.value)}
               onBlur={() => commit('reps', reps)}
-              className="flex-1 h-12 bg-black/50 border border-primary/10 rounded-xl text-center text-[22px] font-bold text-white tabular-nums focus:outline-none focus:border-primary/40 transition-colors"
+              className="w-0 flex-1 h-11 bg-black/50 border border-primary/10 rounded-xl text-center text-xl font-bold text-white tabular-nums focus:outline-none focus:border-primary/40 transition-colors min-w-0"
             />
             <button
               onClick={() => stepReps(1)}
-              className="stepper-btn w-11 h-12 rounded-xl flex items-center justify-center text-white/80 text-lg font-light tap-scale active:bg-white/10"
+              className="stepper-btn w-9 h-11 rounded-xl flex items-center justify-center text-white/80 text-lg font-light tap-scale active:bg-white/10 flex-shrink-0"
             >
               +
             </button>
