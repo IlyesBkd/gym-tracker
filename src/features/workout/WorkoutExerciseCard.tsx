@@ -253,6 +253,7 @@ export function WorkoutExerciseCard({ exercise, previous, best, allWorkouts, cur
                 set={set}
                 onChange={s => updateSet(i, s)}
                 onRemove={() => removeSet(i)}
+                restDuration={restDuration}
               />
             ))}
           </div>

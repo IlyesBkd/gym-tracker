@@ -184,6 +184,7 @@ function SupersetExerciseRow({
             set={set}
             onChange={s => updateSet(i, s)}
             onRemove={() => removeSet(i)}
+            restDuration={restDuration}
           />
         ))}
       </div>
