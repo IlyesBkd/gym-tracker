@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { WorkoutTemplate } from '@/lib/types'
 import { getAllTemplates, saveTemplate, deleteTemplate } from '@/lib/db'
 
@@ -6,6 +6,7 @@ export function useTemplates() {
   const [templates, setTemplates] = useState<WorkoutTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const initialized = useRef(false)
 
   const refresh = useCallback(async () => {
     try {
@@ -15,7 +16,10 @@ export function useTemplates() {
     } catch {
       setError('Impossible de charger les programmes')
     } finally {
-      setLoading(false)
+      if (!initialized.current) {
+        initialized.current = true
+        setLoading(false)
+      }
     }
   }, [])
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Workout } from '@/lib/types'
 import { getAllWorkouts, saveWorkout, deleteWorkout } from '@/lib/db'
 
@@ -6,6 +6,7 @@ export function useWorkouts() {
   const [workouts, setWorkouts] = useState<Workout[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const initialized = useRef(false)
 
   const refresh = useCallback(async () => {
     try {
@@ -15,7 +16,11 @@ export function useWorkouts() {
     } catch {
       setError('Impossible de charger les séances')
     } finally {
-      setLoading(false)
+      // Only show loading spinner on first load, not on subsequent refreshes
+      if (!initialized.current) {
+        initialized.current = true
+        setLoading(false)
+      }
     }
   }, [])
 

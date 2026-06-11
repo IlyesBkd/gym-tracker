@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { BodyWeightEntry } from '@/lib/types'
 import { getAllBodyWeight, saveBodyWeight, deleteBodyWeight } from '@/lib/db'
 
@@ -6,6 +6,7 @@ export function useBodyWeight() {
   const [entries, setEntries] = useState<BodyWeightEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const initialized = useRef(false)
 
   const refresh = useCallback(async () => {
     try {
@@ -15,13 +16,15 @@ export function useBodyWeight() {
     } catch {
       setError('Impossible de charger les données')
     } finally {
-      setLoading(false)
+      if (!initialized.current) {
+        initialized.current = true
+        setLoading(false)
+      }
     }
   }, [])
 
   useEffect(() => { refresh() }, [refresh])
 
-  // Optimistic save: add locally first, then confirm with API
   const save = async (entry: BodyWeightEntry) => {
     setEntries(prev => {
       const idx = prev.findIndex(e => e.id === entry.id)
@@ -35,13 +38,11 @@ export function useBodyWeight() {
     try {
       await saveBodyWeight(entry)
     } catch {
-      // rollback on error
       await refresh()
       setError('Erreur de sauvegarde')
     }
   }
 
-  // Optimistic remove
   const remove = async (id: string) => {
     const prev = entries
     setEntries(e => e.filter(x => x.id !== id))

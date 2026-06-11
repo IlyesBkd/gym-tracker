@@ -27,8 +27,8 @@ export default function App() {
   const { entries: bodyWeight, loading: loadingBody, save: saveBodyWeight, remove: removeBodyWeight } = useBodyWeight()
   const { templates, loading: loadingTemplates, save: saveTemplate, remove: removeTemplate } = useTemplates()
 
-  // A2: show spinner until first data load completes
-  const initialLoading = loadingWorkouts && loadingBody && loadingTemplates
+  // Show spinner only on first load (all three must have loaded at least once)
+  const initialLoading = loadingWorkouts || loadingBody || loadingTemplates
 
   const startFromTemplate = (template: WorkoutTemplate) => {
     setPendingTemplate(template)
