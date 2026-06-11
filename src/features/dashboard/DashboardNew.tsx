@@ -15,10 +15,11 @@ interface Props {
 
 export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = false }: Props) {
   const stats = useMemo(() => {
-    const weekWorkouts = workouts.filter(w => isThisWeek(w.startTime))
-    const monthWorkouts = workouts.filter(w => isThisMonth(w.startTime))
-    const totalTime = workouts.reduce((sum, w) => sum + getWorkoutDuration(w), 0)
-    const totalVolume = workouts.reduce((sum, w) => sum + getWorkoutVolume(w), 0)
+    const weekWorkouts = workouts.filter(w => w.endTime && isThisWeek(w.startTime))
+    const monthWorkouts = workouts.filter(w => w.endTime && isThisMonth(w.startTime))
+    const completedWorkouts = workouts.filter(w => w.endTime)
+    const totalTime = completedWorkouts.reduce((sum, w) => sum + getWorkoutDuration(w), 0)
+    const totalVolume = completedWorkouts.reduce((sum, w) => sum + getWorkoutVolume(w), 0)
     const weekVolume = getVolumeByMuscle(weekWorkouts)
     return { weekCount: weekWorkouts.length, monthCount: monthWorkouts.length, totalTime, totalVolume, weekVolume }
   }, [workouts])
