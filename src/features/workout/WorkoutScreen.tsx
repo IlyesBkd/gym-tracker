@@ -8,7 +8,7 @@ import { WorkoutExerciseCard } from './WorkoutExerciseCard'
 import { SupersetCard } from './SupersetCard'
 
 interface Props {
-  onFinish: () => void
+  onFinish: (finished: Workout) => void
   allWorkouts: Workout[]
   startFromTemplate?: WorkoutTemplate | null
   onTemplateConsumed?: () => void
@@ -16,6 +16,7 @@ interface Props {
 
 const ACTIVE_WORKOUT_KEY = 'active-workout-id'
 const ACTIVE_SUPERSETS_KEY = 'active-workout-supersets'
+const ACTIVE_WORKOUT_BACKUP_KEY = 'active-workout-backup'
 
 export function WorkoutScreen({ onFinish, allWorkouts, startFromTemplate, onTemplateConsumed }: Props) {
   const [workout, setWorkout] = useState<Workout | null>(null)
@@ -26,24 +27,48 @@ export function WorkoutScreen({ onFinish, allWorkouts, startFromTemplate, onTemp
 
   useEffect(() => {
     const id = localStorage.getItem(ACTIVE_WORKOUT_KEY)
-    if (id) {
-      // B4: validate that active workout actually exists in DB before restoring
-      getWorkout(id).then(w => {
-        if (w && !w.endTime) {
-          setWorkout(w)
-          const saved = localStorage.getItem(ACTIVE_SUPERSETS_KEY)
-          if (saved) {
-            try { setSupersets(JSON.parse(saved)) } catch { setSupersets([]) }
-          }
-        } else {
-          localStorage.removeItem(ACTIVE_WORKOUT_KEY)
-          localStorage.removeItem(ACTIVE_SUPERSETS_KEY)
+    if (!id) return
+
+    const restoreSupersets = () => {
+      const saved = localStorage.getItem(ACTIVE_SUPERSETS_KEY)
+      if (saved) { try { setSupersets(JSON.parse(saved)) } catch { setSupersets([]) } }
+    }
+
+    // Try to restore from DB first — if unavailable, fall back to local backup
+    getWorkout(id).then(w => {
+      if (w && !w.endTime) {
+        setWorkout(w)
+        restoreSupersets()
+      } else {
+        // DB has no matching workout — try local backup before giving up
+        const backup = localStorage.getItem(ACTIVE_WORKOUT_BACKUP_KEY)
+        if (backup) {
+          try {
+            const backupWorkout = JSON.parse(backup) as Workout
+            if (backupWorkout.id === id && !backupWorkout.endTime) {
+              setWorkout(backupWorkout)
+              restoreSupersets()
+              return
+            }
+          } catch {}
         }
-      }).catch(() => {
         localStorage.removeItem(ACTIVE_WORKOUT_KEY)
         localStorage.removeItem(ACTIVE_SUPERSETS_KEY)
-      })
-    }
+        localStorage.removeItem(ACTIVE_WORKOUT_BACKUP_KEY)
+      }
+    }).catch(() => {
+      // Network error — restore from local backup, DO NOT clear
+      const backup = localStorage.getItem(ACTIVE_WORKOUT_BACKUP_KEY)
+      if (backup) {
+        try {
+          const backupWorkout = JSON.parse(backup) as Workout
+          if (backupWorkout.id === id && !backupWorkout.endTime) {
+            setWorkout(backupWorkout)
+            restoreSupersets()
+          }
+        } catch {}
+      }
+    })
   }, [])
 
   useEffect(() => {
@@ -63,12 +88,14 @@ export function WorkoutScreen({ onFinish, allWorkouts, startFromTemplate, onTemp
 
   const persist = useCallback(async (w: Workout) => {
     setWorkout(w)
+    // Always save to localStorage backup first — survives network failure + app close
+    localStorage.setItem(ACTIVE_WORKOUT_BACKUP_KEY, JSON.stringify(w))
     try {
       await saveWorkout(w)
       setSaveError(false)
     } catch {
-      // B5: show error feedback if save fails
       setSaveError(true)
+      // Backup is already saved locally — data safe even if DB save failed
     }
   }, [])
 
@@ -114,12 +141,15 @@ export function WorkoutScreen({ onFinish, allWorkouts, startFromTemplate, onTemp
   const finishWorkout = async () => {
     if (!workout) return
     const finished = { ...workout, endTime: Date.now() }
-    await saveWorkout(finished)
+    // Optimistic: notify parent immediately so history updates instantly
+    onFinish(finished)
     localStorage.removeItem(ACTIVE_WORKOUT_KEY)
     localStorage.removeItem(ACTIVE_SUPERSETS_KEY)
+    localStorage.removeItem(ACTIVE_WORKOUT_BACKUP_KEY)
     setWorkout(null)
     setSupersets([])
-    onFinish()
+    // Persist to DB in background
+    saveWorkout(finished).catch(() => {})
   }
 
   const addExercise = (exerciseId: string) => {

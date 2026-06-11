@@ -3,7 +3,6 @@ import { WorkoutExercise, WorkoutSet, Workout, SupersetGroup } from '@/lib/types
 import { getExercise } from '@/lib/exercises'
 import { generateId, getDoubleProgressionRecommendation } from '@/lib/utils'
 import { getMachineSettings, getExerciseNote } from '@/lib/db'
-import { startGlobalTimer } from '@/hooks/useTimer'
 import { Button } from '@/components/Button'
 import { SetRow } from './SetRow'
 
@@ -110,9 +109,7 @@ function SupersetExerciseRow({
       timestamp: Date.now(),
     }
     onChange({ ...exercise, sets: [...exercise.sets, newSet] })
-    if (isLastInSuperset) {
-      startGlobalTimer(restDuration)
-    }
+    // Timer starts on validation (✓), not on add
   }
 
   const updateSet = (index: number, set: WorkoutSet) => {
@@ -185,6 +182,7 @@ function SupersetExerciseRow({
             onChange={s => updateSet(i, s)}
             onRemove={() => removeSet(i)}
             restDuration={restDuration}
+            startTimerOnValidate={isLastInSuperset}
           />
         ))}
       </div>
@@ -193,7 +191,7 @@ function SupersetExerciseRow({
         onClick={addSet}
         className="w-full py-3 rounded-xl border border-dashed border-white/10 text-muted text-sm font-medium active:border-primary active:text-primary tap-scale transition-colors"
       >
-        + Série {isLastInSuperset ? '(lance le chrono)' : ''}
+        + Série
       </button>
     </div>
   )

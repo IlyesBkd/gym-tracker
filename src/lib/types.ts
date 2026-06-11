@@ -16,6 +16,7 @@ export interface WorkoutSet {
   reps: number
   rpe?: number
   isWarmup?: boolean
+  done?: boolean
   timestamp: number
 }
 

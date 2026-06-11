@@ -16,7 +16,6 @@ export function useWorkouts() {
     } catch {
       setError('Impossible de charger les séances')
     } finally {
-      // Only show loading spinner on first load, not on subsequent refreshes
       if (!initialized.current) {
         initialized.current = true
         setLoading(false)
@@ -27,10 +26,21 @@ export function useWorkouts() {
   useEffect(() => { refresh() }, [refresh])
 
   const save = async (workout: Workout) => {
+    // Optimistic update: insert/update locally immediately
+    setWorkouts(prev => {
+      const idx = prev.findIndex(w => w.id === workout.id)
+      if (idx >= 0) {
+        const next = [...prev]
+        next[idx] = workout
+        return next
+      }
+      return [workout, ...prev]
+    })
     try {
       await saveWorkout(workout)
-      await refresh()
     } catch {
+      // Rollback on error
+      await refresh()
       setError('Erreur de sauvegarde')
     }
   }

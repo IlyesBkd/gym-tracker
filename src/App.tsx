@@ -23,7 +23,7 @@ export default function App() {
   const [showTemplates, setShowTemplates] = useState(false)
   const [pendingTemplate, setPendingTemplate] = useState<WorkoutTemplate | null>(null)
 
-  const { workouts, loading: loadingWorkouts, error: workoutError, remove: removeWorkout, refresh } = useWorkouts()
+  const { workouts, loading: loadingWorkouts, error: workoutError, save: saveWorkout, remove: removeWorkout } = useWorkouts()
   const { entries: bodyWeight, loading: loadingBody, save: saveBodyWeight, remove: removeBodyWeight } = useBodyWeight()
   const { templates, loading: loadingTemplates, save: saveTemplate, remove: removeTemplate } = useTemplates()
 
@@ -84,7 +84,7 @@ export default function App() {
         {tab === 'dashboard' && <Dashboard workouts={workouts} bodyWeight={bodyWeight} onShowTemplates={() => setShowTemplates(true)} />}
         {tab === 'workout' && (
           <WorkoutScreen
-            onFinish={refresh}
+            onFinish={saveWorkout}
             allWorkouts={workouts}
             startFromTemplate={pendingTemplate}
             onTemplateConsumed={() => setPendingTemplate(null)}

@@ -3,7 +3,6 @@ import { WorkoutExercise, WorkoutSet, Workout } from '@/lib/types'
 import { getExercise } from '@/lib/exercises'
 import { generateId, getDoubleProgressionRecommendation, detectStagnation, getProgressionHistory, TrendDirection } from '@/lib/utils'
 import { getMachineSettings, getExerciseNote, getTimerSetting, saveTimerSetting } from '@/lib/db'
-import { startGlobalTimer } from '@/hooks/useTimer'
 import { Button } from '@/components/Button'
 import { SetRow } from './SetRow'
 
@@ -78,7 +77,7 @@ export function WorkoutExerciseCard({ exercise, previous, best, allWorkouts, cur
       timestamp: Date.now(),
     }
     onChange({ ...exercise, sets: [...exercise.sets, newSet] })
-    startGlobalTimer(restDuration)
+    // Timer starts when set is validated (✓), not when added
   }
 
   const updateSet = (index: number, set: WorkoutSet) => {
