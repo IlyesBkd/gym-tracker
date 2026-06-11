@@ -34,7 +34,8 @@ export function WorkoutExerciseCard({ exercise, previous, best, allWorkouts, cur
   const [customRest, setCustomRest] = useState<number | null>(null)
   const [showTimerEdit, setShowTimerEdit] = useState(false)
   const [timerInput, setTimerInput] = useState('')
-  const [expanded, setExpanded] = useState(true)
+  // Always expanded during workout — collapsing hides sets which is confusing
+  const expanded = true
 
   useEffect(() => {
     getMachineSettings(exercise.exerciseId).then(s => {
@@ -114,8 +115,7 @@ export function WorkoutExerciseCard({ exercise, previous, best, allWorkouts, cur
     <div className={`glass rounded-3xl overflow-hidden ${isNewPR ? 'pr-pulse' : ''}`}>
       {/* Header */}
       <div
-        className="p-4 flex items-center gap-3 active:bg-white/[0.02] transition-colors cursor-pointer"
-        onClick={() => setExpanded(!expanded)}
+        className="p-4 flex items-center gap-3"
       >
         {(canMoveUp || canMoveDown) && (
           <div className="flex flex-col gap-1.5" onClick={e => e.stopPropagation()}>
