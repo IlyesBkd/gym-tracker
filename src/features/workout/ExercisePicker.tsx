@@ -3,6 +3,7 @@ import { EXERCISES } from '@/lib/exercises'
 import { EXERCISE_GIFS } from '@/lib/exercise-images'
 import { MuscleGroup } from '@/lib/types'
 import { Button } from '@/components/Button'
+import { safeParseJSON, safeSetJSON } from '@/lib/safe-storage'
 
 interface Props {
   onSelect: (exerciseId: string) => void
@@ -78,9 +79,9 @@ export function ExercisePicker({ onSelect, onBack }: Props) {
 
   const selectExternal = (ex: ExternalExercise) => {
     const id = `ext-${ex.exerciseId}`
-    const custom = JSON.parse(localStorage.getItem('custom-exercises') || '{}')
+    const custom = safeParseJSON<Record<string, any>>('custom-exercises', {})
     custom[id] = { name: ex.name, gifUrl: ex.gifUrl }
-    localStorage.setItem('custom-exercises', JSON.stringify(custom))
+    safeSetJSON('custom-exercises', custom)
     onSelect(id)
   }
 

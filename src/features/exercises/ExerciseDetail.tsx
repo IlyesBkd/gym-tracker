@@ -155,9 +155,17 @@ export function ExerciseDetail({ exerciseId, workouts, onBack }: Props) {
           {history.slice(0, 20).map((h, i) => (
             <div key={i} className="px-4 py-3">
               <p className="text-sm font-medium text-white">{formatDate(h.date)}</p>
-              <p className="text-xs text-muted mt-0.5">
-                {h.sets.filter(s => !s.isWarmup).map(s => `${s.weight}kg × ${s.reps}`).join(' · ')}
-              </p>
+              <div className="text-xs text-muted mt-0.5 space-y-0.5">
+                {h.sets.filter(s => !s.isWarmup).map((s, si) => (
+                  <div key={si}>
+                    {s.weight}kg × {s.reps}
+                    {s.drops && s.drops.length > 0 && (
+                      <span className="text-warning"> 🔻 {s.drops.map(d => `${d.weight}kg×${d.reps}`).join(' → ')}</span>
+                    )}
+                    {si < h.sets.filter(s => !s.isWarmup).length - 1 && <span> · </span>}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
           {history.length === 0 && (

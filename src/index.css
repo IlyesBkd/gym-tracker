@@ -1,16 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #D4A843;
-  --color-primary-light: #E8C36A;
-  --color-primary-dark: #B8912E;
-  --color-surface: #111111;
-  --color-surface-light: #1A1A1A;
-  --color-surface-lighter: #242424;
-  --color-danger: #E53E3E;
-  --color-success: #48BB78;
-  --color-warning: #ECC94B;
-  --color-muted: #6B6B6B;
+  --color-primary: #9FE6C4;
+  --color-primary-light: #74D2A8;
+  --color-primary-dark: #7BC6A8;
+  --color-surface: #141815;
+  --color-surface-light: #1B211D;
+  --color-surface-lighter: #232A25;
+  --color-danger: #F2BDB0;
+  --color-success: #9FE6C4;
+  --color-warning: #E7C98A;
+  --color-muted: #6B746E;
+
+  /* Nouvelles couleurs du design */
+  --color-ink: #0B0F0D;
+  --color-surface2: #1B211D;
+  --color-surface3: #232A25;
+  --color-line: #2A322C;
+  --color-mint: #9FE6C4;
+  --color-mint2: #74D2A8;
+  --color-lav: #C7C2F2;
+  --color-peach: #F2BDB0;
+  --color-sky: #A9D2EA;
+  --color-amber: #E7C98A;
+  --color-tx: #ECF1EE;
+  --color-tx2: #9CA69F;
+  --color-tx3: #6B746E;
+
+  /* Border radius */
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
 }
 
 html, body, #root {
@@ -23,6 +42,45 @@ body {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+}
+
+/* Keyboard navigation focus indicators */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(159, 230, 196, 0.1);
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  box-shadow: 0 0 0 3px rgba(159, 230, 196, 0.15);
+}
+
+/* Skip to main content link for accessibility */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-primary);
+  color: black;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+  border-radius: 0 0 8px 0;
+}
+
+.skip-to-main:focus {
+  top: 0;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
@@ -93,6 +151,15 @@ input[type="number"] {
   animation: pr-pulse 2s ease-in-out infinite;
 }
 
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Tap feedback */
 .tap-scale {
   transition: transform 0.1s ease, opacity 0.1s ease;
@@ -131,3 +198,15 @@ input[type="number"] {
   to { transform: rotate(360deg); }
 }
 .animate-spin { animation: spin 0.8s linear infinite; }
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-scale-in { animation: scale-in 0.2s ease-out; }

@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { WorkoutSet } from '@/lib/types'
 import { startGlobalTimer } from '@/hooks/useTimer'
+import { showToast } from '@/components/Toast'
+import { haptics } from '@/lib/haptics'
 
 interface Props {
   index: number
@@ -14,6 +16,9 @@ interface Props {
 export function SetRow({ index, set, onChange, onRemove, restDuration, startTimerOnValidate = true }: Props) {
   const [weight, setWeight] = useState(set.weight.toString())
   const [reps, setReps] = useState(set.reps.toString())
+  const [showDrops, setShowDrops] = useState(false)
+  const [dropWeight, setDropWeight] = useState('')
+  const [dropReps, setDropReps] = useState('')
   const editingWeight = useRef(false)
   const editingReps = useRef(false)
 
@@ -38,6 +43,31 @@ export function SetRow({ index, set, onChange, onRemove, restDuration, startTime
   }
 
   const toggleWarmup = () => onChange({ ...set, isWarmup: !set.isWarmup })
+  const toggleDropSet = () => {
+    const newIsDropSet = !set.isDropSet
+    if (!newIsDropSet) {
+      onChange({ ...set, isDropSet: false, drops: [] })
+      setShowDrops(false)
+    } else {
+      onChange({ ...set, isDropSet: true })
+      setShowDrops(true)
+    }
+  }
+
+  const addDrop = () => {
+    const w = parseFloat(dropWeight)
+    const r = parseInt(dropReps)
+    if (!w || !r) return
+    const drops = set.drops || []
+    onChange({ ...set, drops: [...drops, { weight: w, reps: r }] })
+    setDropWeight('')
+    setDropReps('')
+  }
+
+  const removeDrop = (dropIndex: number) => {
+    const drops = set.drops || []
+    onChange({ ...set, drops: drops.filter((_, i) => i !== dropIndex) })
+  }
 
   const cycleRpe = () => {
     const current = set.rpe || 0
@@ -60,10 +90,38 @@ export function SetRow({ index, set, onChange, onRemove, restDuration, startTime
   const validate = () => {
     const w = parseFloat(weight) || 0
     const r = parseInt(reps) || 0
+
+    // Validation: prevent validating with 0 weight or 0 reps
+    if (!set.done) {
+      if (w <= 0 && r <= 0) {
+        showToast('Poids et reps doivent être > 0', 'warning', 2500)
+        haptics.warning()
+        return
+      }
+      if (w <= 0) {
+        showToast('Le poids doit être supérieur à 0', 'warning', 2500)
+        haptics.warning()
+        return
+      }
+      if (r <= 0) {
+        showToast('Les reps doivent être supérieures à 0', 'warning', 2500)
+        haptics.warning()
+        return
+      }
+    }
+
     const nowDone = !set.done
+
+    // Haptic feedback on validation
+    if (nowDone) {
+      haptics.success() // Double tap for successful validation
+    } else {
+      haptics.light() // Light tap for un-checking
+    }
+
     onChange({ ...set, weight: w, reps: r, done: nowDone })
     if (nowDone && !set.isWarmup && startTimerOnValidate) {
-      startGlobalTimer(restDuration)
+      startGlobalTimer(restDuration).catch(console.error)
     }
   }
 
@@ -72,7 +130,7 @@ export function SetRow({ index, set, onChange, onRemove, restDuration, startTime
       set.done
         ? 'bg-primary/8 border border-primary/25'
         : 'gold-border'
-    } ${set.isWarmup ? 'opacity-50' : ''}`}>
+    } ${set.isWarmup ? 'opacity-50' : ''} ${set.isDropSet ? 'border-l-4 border-l-warning' : ''}`}>
 
       {/* Top row */}
       <div className="flex items-center justify-between p-3 pb-2">
@@ -89,6 +147,16 @@ export function SetRow({ index, set, onChange, onRemove, restDuration, startTime
           >
             {set.isWarmup ? 'Échauf.' : `Série ${index}`}
           </button>
+          <button
+            onClick={toggleDropSet}
+            className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg transition-colors ${
+              set.isDropSet
+                ? 'bg-warning/15 text-warning border border-warning/20'
+                : 'bg-white/5 text-white/50 border border-white/5'
+            }`}
+          >
+            Drop {set.drops && set.drops.length > 0 ? `(${set.drops.length})` : ''}
+          </button>
           {set.done && !set.isWarmup && (
             <span className="text-[10px] font-bold text-primary/80">✓ validée</span>
           )}
@@ -104,7 +172,7 @@ export function SetRow({ index, set, onChange, onRemove, restDuration, startTime
         </div>
         <div className="flex items-center gap-1.5">
           <button
-            onClick={() => startGlobalTimer(restDuration)}
+            onClick={() => startGlobalTimer(restDuration).catch(console.error)}
             className="w-8 h-8 rounded-lg glass-light flex items-center justify-center text-primary/60 active:text-primary tap-scale"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -200,6 +268,64 @@ export function SetRow({ index, set, onChange, onRemove, restDuration, startTime
           </button>
         </div>
       </div>
+
+      {/* Drop sets section */}
+      {set.isDropSet && showDrops && (
+        <div className="px-3 pb-3 space-y-2 border-t border-warning/10 pt-3 bg-warning/5">
+          <p className="text-[10px] text-warning/80 uppercase tracking-wider font-bold">Séries dégressives</p>
+
+          {/* Existing drops */}
+          {set.drops && set.drops.length > 0 && (
+            <div className="space-y-1.5">
+              {set.drops.map((drop, i) => (
+                <div key={i} className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2">
+                  <span className="text-sm text-white font-bold tabular-nums flex-1">
+                    {drop.weight}kg × {drop.reps}
+                  </span>
+                  <button
+                    onClick={() => removeDrop(i)}
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-muted active:text-danger tap-scale"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Add new drop */}
+          <div className="flex gap-2 items-end">
+            <div className="flex-1">
+              <p className="text-[9px] text-muted uppercase tracking-[0.12em] text-center mb-1.5 font-medium">Poids</p>
+              <input
+                type="number"
+                inputMode="decimal"
+                value={dropWeight}
+                onChange={e => setDropWeight(e.target.value)}
+                placeholder="kg"
+                className="w-full h-10 bg-black/50 border border-warning/20 rounded-xl text-center text-base font-bold text-white tabular-nums focus:outline-none focus:border-warning/40 transition-colors"
+              />
+            </div>
+            <div className="flex-1">
+              <p className="text-[9px] text-muted uppercase tracking-[0.12em] text-center mb-1.5 font-medium">Reps</p>
+              <input
+                type="number"
+                inputMode="numeric"
+                value={dropReps}
+                onChange={e => setDropReps(e.target.value)}
+                placeholder="reps"
+                className="w-full h-10 bg-black/50 border border-warning/20 rounded-xl text-center text-base font-bold text-white tabular-nums focus:outline-none focus:border-warning/40 transition-colors"
+              />
+            </div>
+            <button
+              onClick={addDrop}
+              className="w-10 h-10 rounded-xl bg-warning/20 border border-warning/30 text-warning font-bold tap-scale active:bg-warning/30 flex-shrink-0"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -10,12 +10,19 @@ export interface Exercise {
   image?: string
 }
 
+export interface DropSetEntry {
+  weight: number
+  reps: number
+}
+
 export interface WorkoutSet {
   id: string
   weight: number
   reps: number
+  drops?: DropSetEntry[]
   rpe?: number
   isWarmup?: boolean
+  isDropSet?: boolean
   done?: boolean
   timestamp: number
 }

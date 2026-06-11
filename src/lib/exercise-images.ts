@@ -4,7 +4,8 @@
 export const EXERCISE_GIFS: Record<string, string> = {
   // Chest
   'push-ups': 'https://static.exercisedb.dev/media/vptOQ4N.gif', // deep push up
-  'pec-fly': 'https://static.exercisedb.dev/media/ESOd5Pl.gif', // dumbbell incline fly
+  'pec-fly': 'https://static.exercisedb.dev/media/v3xmPAR.gif', // lever seated fly (pec deck machine)
+  'dumbbell-decline-fly': 'https://static.exercisedb.dev/media/xXm4nYq.gif', // dumbbell decline fly
   'assisted-bench-press': 'https://static.exercisedb.dev/media/EIeI8Vf.gif', // barbell bench press
   'assisted-incline-bench': 'https://static.exercisedb.dev/media/3TZduzM.gif', // barbell incline bench press
   'chest-press': 'https://static.exercisedb.dev/media/DOoWcnA.gif', // lever chest press
@@ -35,18 +36,32 @@ export const EXERCISE_GIFS: Record<string, string> = {
   // Épaules
   'dumbbell-lateral-raise': 'https://static.exercisedb.dev/media/DsgkuIt.gif',
   'cable-lateral-raise': 'https://static.exercisedb.dev/media/goJ6ezq.gif',
+  'cable-one-arm-lateral-raise': 'https://static.exercisedb.dev/media/wEulIzp.gif',
   'dumbbell-shoulder-press': 'https://static.exercisedb.dev/media/znQUdHY.gif',
   'machine-shoulder-press': 'https://static.exercisedb.dev/media/67n3r98.gif',
   'dumbbell-front-raise': 'https://static.exercisedb.dev/media/3eGE2JC.gif',
+  'cable-front-raise': 'https://static.exercisedb.dev/media/u2X71Np.gif',
   'cable-upright-row': 'https://static.exercisedb.dev/media/cALKspW.gif',
   'dumbbell-rear-lateral-raise': 'https://static.exercisedb.dev/media/v1qBec9.gif',
+  'dumbbell-upright-row': 'https://static.exercisedb.dev/media/ainizkb.gif',
+  'dumbbell-rear-fly': 'https://static.exercisedb.dev/media/8DiFDVA.gif',
+  'dumbbell-one-arm-shoulder-press': 'https://static.exercisedb.dev/media/84RyJf8.gif',
+  'dumbbell-standing-overhead-press': 'https://static.exercisedb.dev/media/A6wtbuL.gif',
+  'dumbbell-lying-rear-lateral-raise': 'https://static.exercisedb.dev/media/53Ttlck.gif',
+  'dumbbell-scott-press': 'https://static.exercisedb.dev/media/5vfAI0I.gif',
+  'dumbbell-full-can-lateral-raise': 'https://static.exercisedb.dev/media/AQ0mC4Y.gif',
+  'smith-shoulder-press': 'https://static.exercisedb.dev/media/903mzG8.gif',
+  'barbell-upright-row': 'https://static.exercisedb.dev/media/83HoW9X.gif',
+  'lever-one-arm-shoulder-press': 'https://static.exercisedb.dev/media/2KGnL6M.gif',
 }
+
+import { safeParseJSON } from './safe-storage'
 
 export function getExerciseGif(id: string): string | undefined {
   if (EXERCISE_GIFS[id]) return EXERCISE_GIFS[id]
   // Custom exercises from ExerciseDB stored in localStorage
   if (id.startsWith('ext-')) {
-    const custom = JSON.parse(localStorage.getItem('custom-exercises') || '{}')
+    const custom = safeParseJSON<Record<string, any>>('custom-exercises', {})
     return custom[id]?.gifUrl
   }
   return undefined

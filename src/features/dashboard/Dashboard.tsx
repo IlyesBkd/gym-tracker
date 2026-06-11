@@ -3,18 +3,20 @@ import { Workout, BodyWeightEntry, MuscleGroup } from '@/lib/types'
 import { getExercise } from '@/lib/exercises'
 import { isThisWeek, isThisMonth, getWorkoutVolume, getWorkoutDuration, formatDuration, getVolumeByMuscle, relativeTime, getMuscleFrequency7d, detectDeloadNeed } from '@/lib/utils'
 import { WorkoutCalendar } from './WorkoutCalendar'
+import { LoadingSpinner } from '@/components/Spinner'
 
 interface Props {
   workouts: Workout[]
   bodyWeight: BodyWeightEntry[]
   onShowTemplates: () => void
+  loading?: boolean
 }
 
 const MIN_WEEKLY_SETS: Record<MuscleGroup, number> = {
   chest: 6, back: 6, biceps: 4, triceps: 4, abs: 3, shoulders: 6,
 }
 
-export function Dashboard({ workouts, bodyWeight, onShowTemplates }: Props) {
+export function Dashboard({ workouts, bodyWeight, onShowTemplates, loading = false }: Props) {
   const stats = useMemo(() => {
     const weekWorkouts = workouts.filter(w => isThisWeek(w.startTime))
     const monthWorkouts = workouts.filter(w => isThisMonth(w.startTime))
@@ -62,7 +64,11 @@ export function Dashboard({ workouts, bodyWeight, onShowTemplates }: Props) {
         </button>
       </div>
 
-      {lastSession && (
+      {loading && (
+        <LoadingSpinner text="Chargement des données…" />
+      )}
+
+      {!loading && lastSession && (
         <div className="glass rounded-2xl p-4">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] text-muted uppercase tracking-[0.12em]">Dernière séance</span>
@@ -73,14 +79,14 @@ export function Dashboard({ workouts, bodyWeight, onShowTemplates }: Props) {
         </div>
       )}
 
-      {deload.needsDeload && (
+      {!loading && deload.needsDeload && (
         <div className="glass rounded-2xl p-4 border-primary/15" style={{ borderColor: 'rgba(212,168,67,0.15)' }}>
           <p className="font-semibold text-primary text-sm">⚠️ Décharge suggérée</p>
           <p className="text-[11px] text-white/60 mt-1">{deload.weeksProgressing} semaines d'augmentation. Réduis de 40-50% cette semaine.</p>
         </div>
       )}
 
-      {muscleAlerts.length > 0 && (
+      {!loading && muscleAlerts.length > 0 && (
         <div className="glass rounded-2xl p-4">
           <h3 className="text-[10px] text-muted uppercase tracking-[0.12em] mb-3">Fréquence musculaire (7j)</h3>
           <div className="space-y-2.5">
@@ -97,14 +103,14 @@ export function Dashboard({ workouts, bodyWeight, onShowTemplates }: Props) {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
+      {!loading && <div className="grid grid-cols-2 gap-3">
         <GlassCard label="Cette semaine" value={stats.weekCount.toString()} unit="séances" gold />
         <GlassCard label="Ce mois" value={stats.monthCount.toString()} unit="séances" />
         <GlassCard label="Temps total" value={formatDuration(stats.totalTime)} />
         <GlassCard label="Volume total" value={fmtVol(stats.totalVolume)} unit="kg" />
-      </div>
+      </div>}
 
-      {bodyTrend && (
+      {!loading && bodyTrend && (
         <div className="glass rounded-2xl p-4">
           <h3 className="text-[10px] text-muted uppercase tracking-[0.12em] mb-2">Poids corporel</h3>
           <div className="flex items-baseline gap-2">
@@ -115,7 +121,7 @@ export function Dashboard({ workouts, bodyWeight, onShowTemplates }: Props) {
         </div>
       )}
 
-      <div className="glass rounded-2xl p-4">
+      {!loading && <div className="glass rounded-2xl p-4">
         <h3 className="text-[10px] text-muted uppercase tracking-[0.12em] mb-4">Volume hebdo par muscle</h3>
         <div className="space-y-3">
           {Object.entries(stats.weekVolume).map(([muscle, vol]) => {
@@ -133,9 +139,9 @@ export function Dashboard({ workouts, bodyWeight, onShowTemplates }: Props) {
             )
           })}
         </div>
-      </div>
+      </div>}
 
-      <WorkoutCalendar workouts={workouts} />
+      {!loading && <WorkoutCalendar workouts={workouts} />}
     </div>
   )
 }

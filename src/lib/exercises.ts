@@ -1,9 +1,13 @@
 import { Exercise } from './types'
+import { safeParseJSON } from './safe-storage'
 
 export const EXERCISES: Exercise[] = [
   // Pectoraux
   { id: 'push-ups', name: 'Pompes', muscleGroup: 'chest', type: 'compound' },
-  { id: 'pec-fly', name: 'Écarté pectoraux', muscleGroup: 'chest', type: 'isolation' },
+  { id: 'pec-fly', name: 'Pec deck (butterfly)', muscleGroup: 'chest', type: 'isolation' },
+  { id: 'dumbbell-fly', name: 'Pec fly haltères', muscleGroup: 'chest', type: 'isolation' },
+  { id: 'dumbbell-decline-fly', name: 'Écarté décliné haltères', muscleGroup: 'chest', type: 'isolation' },
+  { id: 'cable-fly', name: 'Pec fly poulie', muscleGroup: 'chest', type: 'isolation' },
   { id: 'assisted-bench-press', name: 'Développé couché assisté', muscleGroup: 'chest', type: 'compound' },
   { id: 'assisted-incline-bench', name: 'Développé incliné assisté', muscleGroup: 'chest', type: 'compound' },
   { id: 'chest-press', name: 'Chest press', muscleGroup: 'chest', type: 'compound' },
@@ -34,11 +38,23 @@ export const EXERCISES: Exercise[] = [
   // Épaules
   { id: 'dumbbell-lateral-raise', name: 'Élévations latérales haltères', muscleGroup: 'shoulders', type: 'isolation' },
   { id: 'cable-lateral-raise', name: 'Élévations latérales poulie', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'cable-one-arm-lateral-raise', name: 'Élévations latérales poulie un bras', muscleGroup: 'shoulders', type: 'isolation' },
   { id: 'dumbbell-shoulder-press', name: 'Développé épaules haltères', muscleGroup: 'shoulders', type: 'compound' },
   { id: 'machine-shoulder-press', name: 'Développé épaules machine', muscleGroup: 'shoulders', type: 'compound' },
   { id: 'dumbbell-front-raise', name: 'Élévations frontales haltères', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'cable-front-raise', name: 'Élévations frontales poulie', muscleGroup: 'shoulders', type: 'isolation' },
   { id: 'cable-upright-row', name: 'Tirage menton poulie', muscleGroup: 'shoulders', type: 'compound' },
   { id: 'dumbbell-rear-lateral-raise', name: 'Élévations arrière haltères', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'dumbbell-upright-row', name: 'Tirage menton haltères', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'dumbbell-rear-fly', name: 'Élévations arrière haltères (debout)', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'dumbbell-one-arm-shoulder-press', name: 'Développé épaule un bras', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'dumbbell-standing-overhead-press', name: 'Développé debout haltères', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'dumbbell-lying-rear-lateral-raise', name: 'Élévations arrière allongé', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'dumbbell-scott-press', name: 'Scott press haltères', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'dumbbell-full-can-lateral-raise', name: 'Élévations latérales en canette', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'smith-shoulder-press', name: 'Développé épaules Smith', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'barbell-upright-row', name: 'Tirage menton barre', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'lever-one-arm-shoulder-press', name: 'Développé épaule machine un bras', muscleGroup: 'shoulders', type: 'compound' },
 ]
 
 export function getExercise(id: string): Exercise | undefined {
@@ -47,7 +63,7 @@ export function getExercise(id: string): Exercise | undefined {
 
   // Check custom exercises from ExerciseDB
   if (id.startsWith('ext-')) {
-    const custom = JSON.parse(localStorage.getItem('custom-exercises') || '{}')
+    const custom = safeParseJSON<Record<string, any>>('custom-exercises', {})
     const entry = custom[id]
     if (entry) {
       return {
@@ -63,7 +79,7 @@ export function getExercise(id: string): Exercise | undefined {
 
 export function getCustomExerciseGif(id: string): string | undefined {
   if (!id.startsWith('ext-')) return undefined
-  const custom = JSON.parse(localStorage.getItem('custom-exercises') || '{}')
+  const custom = safeParseJSON<Record<string, any>>('custom-exercises', {})
   return custom[id]?.gifUrl
 }
 

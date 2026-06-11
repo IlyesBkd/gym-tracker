@@ -197,7 +197,17 @@ export function WorkoutExerciseCard({ exercise, previous, best, allWorkouts, cur
               {previous.length > 0 && (
                 <div className="flex-1 glass-light rounded-xl p-2.5">
                   <span className="text-[9px] text-muted uppercase tracking-wider block mb-0.5">Précédent</span>
-                  <span className="text-[11px] text-white/80 font-medium">{previous.filter(s => !s.isWarmup).map(s => `${s.weight}×${s.reps}`).join(' · ')}</span>
+                  <div className="text-[11px] text-white/80 font-medium space-y-0.5">
+                    {previous.filter(s => !s.isWarmup).map((s, i) => (
+                      <div key={i}>
+                        {s.weight}×{s.reps}
+                        {s.drops && s.drops.length > 0 && (
+                          <span className="text-warning text-[10px]"> 🔻{s.drops.map(d => `${d.weight}×${d.reps}`).join('→')}</span>
+                        )}
+                        {i < previous.filter(s => !s.isWarmup).length - 1 && ' · '}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               {best && (

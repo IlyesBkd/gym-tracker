@@ -159,7 +159,16 @@ function SupersetExerciseRow({
 
       {previous.length > 0 && (
         <div className="text-xs text-muted bg-surface-lighter rounded-xl p-2.5">
-          Précédent : {previous.filter(s => !s.isWarmup).map(s => `${s.weight}×${s.reps}`).join(' · ')}
+          <span>Précédent : </span>
+          {previous.filter(s => !s.isWarmup).map((s, i) => (
+            <span key={i}>
+              {s.weight}×{s.reps}
+              {s.drops && s.drops.length > 0 && (
+                <span className="text-warning"> 🔻{s.drops.map(d => `${d.weight}×${d.reps}`).join('→')}</span>
+              )}
+              {i < previous.filter(s => !s.isWarmup).length - 1 && ' · '}
+            </span>
+          ))}
         </div>
       )}
 
