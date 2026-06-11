@@ -1,4 +1,4 @@
-export type MuscleGroup = 'chest' | 'back' | 'biceps' | 'triceps' | 'abs'
+export type MuscleGroup = 'chest' | 'back' | 'biceps' | 'triceps' | 'abs' | 'shoulders'
 
 export type ExerciseType = 'compound' | 'isolation'
 

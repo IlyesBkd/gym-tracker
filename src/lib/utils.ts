@@ -62,6 +62,7 @@ export function getVolumeByMuscle(workouts: Workout[]): Record<MuscleGroup, numb
     biceps: 0,
     triceps: 0,
     abs: 0,
+    shoulders: 0,
   }
 
   for (const workout of workouts) {
@@ -83,6 +84,7 @@ export function getSetsByMuscle(workouts: Workout[]): Record<MuscleGroup, number
     biceps: 0,
     triceps: 0,
     abs: 0,
+    shoulders: 0,
   }
 
   for (const workout of workouts) {

@@ -15,11 +15,12 @@ interface ExternalExercise {
   gifUrl: string
 }
 
-const MUSCLE_GROUPS: MuscleGroup[] = ['chest', 'back', 'biceps', 'triceps', 'abs']
+const MUSCLE_GROUPS: MuscleGroup[] = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'abs']
 
 const BODYPART_MAP: Record<string, string> = {
   chest: 'chest',
   back: 'back',
+  shoulders: 'shoulders',
   biceps: 'upper arms',
   triceps: 'upper arms',
   abs: 'waist',

@@ -11,7 +11,7 @@ interface Props {
 }
 
 const MIN_WEEKLY_SETS: Record<MuscleGroup, number> = {
-  chest: 6, back: 6, biceps: 4, triceps: 4, abs: 3,
+  chest: 6, back: 6, biceps: 4, triceps: 4, abs: 3, shoulders: 6,
 }
 
 export function Dashboard({ workouts, bodyWeight, onShowTemplates }: Props) {

@@ -12,6 +12,7 @@ const MUSCLE_COLORS: Record<MuscleGroup, string> = {
   biceps: 'from-purple-400 to-purple-600',
   triceps: 'from-pink-400 to-pink-600',
   abs: 'from-amber-400 to-amber-600',
+  shoulders: 'from-sky-400 to-sky-600',
 }
 
 export function StatsScreen({ workouts }: Props) {

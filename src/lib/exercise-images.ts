@@ -31,6 +31,15 @@ export const EXERCISE_GIFS: Record<string, string> = {
 
   // Abs
   'crunch-machine': 'https://static.exercisedb.dev/media/ZnJHhMk.gif', // lever seated crunch
+
+  // Épaules
+  'dumbbell-lateral-raise': 'https://static.exercisedb.dev/media/DsgkuIt.gif',
+  'cable-lateral-raise': 'https://static.exercisedb.dev/media/goJ6ezq.gif',
+  'dumbbell-shoulder-press': 'https://static.exercisedb.dev/media/znQUdHY.gif',
+  'machine-shoulder-press': 'https://static.exercisedb.dev/media/67n3r98.gif',
+  'dumbbell-front-raise': 'https://static.exercisedb.dev/media/3eGE2JC.gif',
+  'cable-upright-row': 'https://static.exercisedb.dev/media/cALKspW.gif',
+  'dumbbell-rear-lateral-raise': 'https://static.exercisedb.dev/media/v1qBec9.gif',
 }
 
 export function getExerciseGif(id: string): string | undefined {

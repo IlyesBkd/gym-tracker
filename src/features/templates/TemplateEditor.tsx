@@ -11,7 +11,7 @@ interface Props {
   onBack: () => void
 }
 
-const MUSCLE_GROUPS: MuscleGroup[] = ['chest', 'back', 'biceps', 'triceps', 'abs']
+const MUSCLE_GROUPS: MuscleGroup[] = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'abs']
 
 export function TemplateEditor({ template, onSave, onBack }: Props) {
   const [name, setName] = useState(template?.name ?? '')

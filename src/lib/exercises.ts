@@ -30,6 +30,15 @@ export const EXERCISES: Exercise[] = [
 
   // Abdos
   { id: 'crunch-machine', name: 'Crunch machine', muscleGroup: 'abs', type: 'isolation' },
+
+  // Épaules
+  { id: 'dumbbell-lateral-raise', name: 'Élévations latérales haltères', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'cable-lateral-raise', name: 'Élévations latérales poulie', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'dumbbell-shoulder-press', name: 'Développé épaules haltères', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'machine-shoulder-press', name: 'Développé épaules machine', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'dumbbell-front-raise', name: 'Élévations frontales haltères', muscleGroup: 'shoulders', type: 'isolation' },
+  { id: 'cable-upright-row', name: 'Tirage menton poulie', muscleGroup: 'shoulders', type: 'compound' },
+  { id: 'dumbbell-rear-lateral-raise', name: 'Élévations arrière haltères', muscleGroup: 'shoulders', type: 'isolation' },
 ]
 
 export function getExercise(id: string): Exercise | undefined {
