@@ -42,6 +42,11 @@ export function WorkoutScreenComplete({
   const [templateName, setTemplateName] = useState('')
   const [showMenu, setShowMenu] = useState(false)
 
+  // Notification permission state
+  const [notifPermission, setNotifPermission] = useState<NotificationPermission | 'unsupported'>(
+    'Notification' in window ? Notification.permission : 'unsupported'
+  )
+
   // Rest timer state
   const [restTimer, setRestTimer] = useState<{
     active: boolean
@@ -398,8 +403,27 @@ export function WorkoutScreenComplete({
 
   const totalVolume = getWorkoutVolume(workout)
 
+  const requestNotifPermission = async () => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      const result = await Notification.requestPermission()
+      setNotifPermission(result)
+    }
+  }
+
   return (
     <div className="relative flex flex-col min-h-screen bg-black">
+      {/* Notification permission banner */}
+      {notifPermission === 'default' && (
+        <div className="bg-primary/10 border-b border-primary/20 px-4 py-3 flex items-center justify-between gap-3">
+          <p className="text-[12px] text-white/80 flex-1">Active les notifications pour le chrono de repos</p>
+          <button
+            onClick={requestNotifPermission}
+            className="shrink-0 px-4 py-2 rounded-xl bg-primary text-black text-[12px] font-bold tap-scale"
+          >
+            Activer
+          </button>
+        </div>
+      )}
       {/* Sticky Header */}
       <div className="sticky top-0 z-20 bg-black/95 backdrop-blur-xl border-b border-white/10 px-4 py-3 shrink-0">
         {/* Row 1 : nav */}
