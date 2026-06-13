@@ -133,6 +133,9 @@ export function WorkoutScreenComplete({
   }
 
   const startWorkout = () => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission()
+    }
     const w: Workout = {
       id: generateId(),
       startTime: Date.now(),

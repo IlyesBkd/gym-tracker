@@ -60,9 +60,11 @@ async function requestNotificationPermission() {
   }
 }
 
-function sendNotificationToServiceWorker(remaining: number, duration: number) {
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({
+async function sendNotificationToServiceWorker(remaining: number, duration: number) {
+  if (!('serviceWorker' in navigator)) return
+  const reg = await navigator.serviceWorker.ready
+  if (reg.active) {
+    reg.active.postMessage({
       type: 'TIMER_UPDATE',
       remaining,
       duration
@@ -108,8 +110,10 @@ function stopTimer() {
   saveTimerState()
   listeners.forEach(l => l())
 
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({ type: 'TIMER_STOP' })
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(reg => {
+      if (reg.active) reg.active.postMessage({ type: 'TIMER_STOP' })
+    })
   }
 }
 
