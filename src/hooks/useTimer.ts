@@ -138,14 +138,38 @@ if (timerState.isRunning) {
   intervalId = window.setInterval(updateRemaining, 100)
 }
 
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && timerState.isRunning) {
-    updateRemaining()
-    if (intervalId === null) {
-      intervalId = window.setInterval(updateRemaining, 100)
-    }
+function handleResume() {
+  if (!timerState.isRunning || !timerState.endTime) return
+  if (intervalId !== null) {
+    clearInterval(intervalId)
+    intervalId = null
   }
+  const now = Date.now()
+  const remaining = Math.max(0, Math.ceil((timerState.endTime - now) / 1000))
+  timerState.remaining = remaining
+  saveTimerState()
+  listeners.forEach(l => l())
+  if (remaining === 0) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      sendTimerCompleteNotification()
+    }
+    if ('vibrate' in navigator) {
+      navigator.vibrate([200, 100, 200, 100, 200])
+    }
+    timerState.isRunning = false
+    timerState.endTime = null
+    saveTimerState()
+    listeners.forEach(l => l())
+  } else {
+    intervalId = window.setInterval(updateRemaining, 100)
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') handleResume()
 })
+window.addEventListener('pageshow', () => handleResume())
+window.addEventListener('focus', () => handleResume())
 
 export function useTimer() {
   const [, setTick] = useState(0)
