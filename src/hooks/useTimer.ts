@@ -52,24 +52,19 @@ const timerState: TimerState = loadTimerState()
 
 const listeners = new Set<() => void>()
 let intervalId: number | null = null
-let lastNotificationTime = 0
-
 async function requestNotificationPermission() {
   if ('Notification' in window && Notification.permission === 'default') {
     await Notification.requestPermission()
   }
 }
 
-async function sendNotificationToServiceWorker(remaining: number, duration: number) {
+function sendTimerCompleteNotification() {
   if (!('serviceWorker' in navigator)) return
-  const reg = await navigator.serviceWorker.ready
-  if (reg.active) {
-    reg.active.postMessage({
-      type: 'TIMER_UPDATE',
-      remaining,
-      duration
-    })
-  }
+  navigator.serviceWorker.ready.then(reg => {
+    if (reg.active) {
+      reg.active.postMessage({ type: 'TIMER_COMPLETE' })
+    }
+  })
 }
 
 function updateRemaining() {
@@ -82,21 +77,23 @@ function updateRemaining() {
     timerState.remaining = remaining
     saveTimerState()
     listeners.forEach(l => l())
-
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const currentTime = Date.now()
-      if (currentTime - lastNotificationTime >= 1000) {
-        lastNotificationTime = currentTime
-        sendNotificationToServiceWorker(remaining, timerState.duration)
-      }
-    }
   }
 
   if (remaining === 0) {
-    stopTimer()
-    if ('vibrate' in navigator) {
-      navigator.vibrate([200, 100, 200])
+    if ('Notification' in window && Notification.permission === 'granted') {
+      sendTimerCompleteNotification()
     }
+    if ('vibrate' in navigator) {
+      navigator.vibrate([200, 100, 200, 100, 200])
+    }
+    timerState.isRunning = false
+    timerState.endTime = null
+    if (intervalId !== null) {
+      clearInterval(intervalId)
+      intervalId = null
+    }
+    saveTimerState()
+    listeners.forEach(l => l())
   }
 }
 
@@ -131,10 +128,6 @@ export async function startGlobalTimer(seconds: number) {
   saveTimerState()
   intervalId = window.setInterval(updateRemaining, 100)
   listeners.forEach(l => l())
-
-  if ('Notification' in window && Notification.permission === 'granted') {
-    sendNotificationToServiceWorker(seconds, seconds)
-  }
 }
 
 export function stopGlobalTimer() {
@@ -144,6 +137,15 @@ export function stopGlobalTimer() {
 if (timerState.isRunning) {
   intervalId = window.setInterval(updateRemaining, 100)
 }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && timerState.isRunning) {
+    updateRemaining()
+    if (intervalId === null) {
+      intervalId = window.setInterval(updateRemaining, 100)
+    }
+  }
+})
 
 export function useTimer() {
   const [, setTick] = useState(0)

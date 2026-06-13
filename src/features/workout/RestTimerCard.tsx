@@ -107,21 +107,21 @@ export function RestTimerCard({ targetSeconds, exerciseName, setNumber, onComple
           </div>
         </div>
 
-        <div className="relative flex-1">
-          <p className="text-primary text-[12px] font-bold uppercase tracking-wider mb-0.5 whitespace-nowrap">
+        <div className="relative flex-1 min-w-0">
+          <p className="text-primary text-[12px] font-bold uppercase tracking-wider mb-0.5">
             Repos en cours
           </p>
-          <p className="text-[15px] font-extrabold leading-tight whitespace-nowrap">
+          <p className="text-[15px] font-extrabold leading-tight truncate">
             {exerciseName} · S{setNumber}
           </p>
-          <p className="text-muted text-[11px] font-medium">Vibration + Son à la fin ✦</p>
+          <p className="text-muted text-[11px] font-medium">Vibration + Son à la fin</p>
         </div>
 
         <button
           onClick={onSkip}
-          className="relative shrink-0 h-11 px-4 rounded-xl bg-surface-lighter text-white/60 text-[13px] font-bold ring-1 ring-white/10 whitespace-nowrap tap-scale transition-transform active:scale-95"
+          className="relative shrink-0 h-11 px-3 rounded-xl bg-surface-lighter text-white/60 text-[13px] font-bold ring-1 ring-white/10 tap-scale transition-transform active:scale-95"
         >
-          Passer →
+          Passer
         </button>
       </div>
     </div>

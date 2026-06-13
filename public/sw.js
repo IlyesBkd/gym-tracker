@@ -43,33 +43,15 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'TIMER_UPDATE') {
-    const { remaining, duration } = event.data;
-
-    if (remaining > 0) {
-      const minutes = Math.floor(remaining / 60);
-      const seconds = remaining % 60;
-      const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-      self.registration.showNotification('Temps de repos', {
-        body: `${display} restant`,
-        icon: '/icon-192.png',
-        badge: '/icon-192.png',
-        tag: 'rest-timer',
-        requireInteraction: false,
-        silent: true,
-        data: { remaining, duration }
-      });
-    } else {
-      self.registration.showNotification('Repos terminé !', {
-        body: 'C\'est parti pour la prochaine série',
-        icon: '/icon-192.png',
-        badge: '/icon-192.png',
-        tag: 'rest-timer',
-        requireInteraction: true,
-        vibrate: [200, 100, 200]
-      });
-    }
+  if (event.data && event.data.type === 'TIMER_COMPLETE') {
+    self.registration.showNotification('Repos terminé !', {
+      body: 'C\'est parti pour la prochaine série 💪',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: 'rest-timer',
+      requireInteraction: true,
+      vibrate: [200, 100, 200, 100, 200]
+    });
   }
 
   if (event.data && event.data.type === 'TIMER_STOP') {
