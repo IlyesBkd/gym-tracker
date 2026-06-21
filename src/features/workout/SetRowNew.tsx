@@ -45,7 +45,6 @@ export function SetRowNew({
   }
 
   const handleComplete = () => {
-    onUpdate({ done: true, timestamp: Date.now() })
     onComplete()
   }
 

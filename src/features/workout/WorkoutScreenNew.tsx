@@ -250,6 +250,7 @@ export function WorkoutScreenNew({
       await saveWorkout(finished)
       localStorage.removeItem(ACTIVE_WORKOUT_KEY)
       localStorage.removeItem(ACTIVE_WORKOUT_BACKUP_KEY)
+      setWorkout(null)
       onFinish(finished)
     } catch (error) {
       alert('Erreur lors de la sauvegarde de la séance')
@@ -302,13 +303,12 @@ export function WorkoutScreenNew({
             <p className="text-white text-[15px] font-bold leading-tight">Workout</p>
           </div>
           <button
-            className="w-14 h-14 rounded-2xl bg-surface-light flex items-center justify-center ring-1 ring-white/10 shrink-0"
-            aria-label="Menu"
+            onClick={() => window.confirm('Annuler la séance ? Toutes les données seront perdues.') && (() => { localStorage.removeItem(ACTIVE_WORKOUT_KEY); localStorage.removeItem(ACTIVE_WORKOUT_BACKUP_KEY); setWorkout(null) })()}
+            className="w-14 h-14 rounded-2xl bg-surface-light flex items-center justify-center ring-1 ring-white/10 shrink-0 tap-scale"
+            aria-label="Annuler la séance"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="5" r="1.5" fill="#ECF1EE"/>
-              <circle cx="12" cy="12" r="1.5" fill="#ECF1EE"/>
-              <circle cx="12" cy="19" r="1.5" fill="#ECF1EE"/>
+              <path d="M18 6L6 18M6 6l12 12" stroke="#ECF1EE" strokeWidth="2" strokeLinecap="round"/>
             </svg>
           </button>
         </div>

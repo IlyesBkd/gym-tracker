@@ -64,10 +64,10 @@ export function DashboardNew({ workouts, bodyWeight, onShowTemplates, loading = 
           <p className="text-muted text-[13px] font-medium">{new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
           <h1 className="text-white text-[26px] font-extrabold leading-tight tracking-tight whitespace-nowrap">Salut, {userName} 👋</h1>
         </div>
-        <button className="w-12 h-12 rounded-full bg-surface-light ring-1 ring-white/10 flex items-center justify-center relative" aria-label="Profil">
+        <div className="w-12 h-12 rounded-full bg-surface-light ring-1 ring-white/10 flex items-center justify-center relative">
           <span className="text-[15px] font-bold text-primary">{userName.slice(0, 2).toUpperCase()}</span>
           <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-primary ring-2 ring-black"></span>
-        </button>
+        </div>
       </header>
 
       {loading && (

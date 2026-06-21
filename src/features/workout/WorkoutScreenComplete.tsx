@@ -335,6 +335,8 @@ export function WorkoutScreenComplete({
       localStorage.removeItem(ACTIVE_WORKOUT_KEY)
       localStorage.removeItem(ACTIVE_SUPERSETS_KEY)
       localStorage.removeItem(ACTIVE_WORKOUT_BACKUP_KEY)
+      setWorkout(null)
+      setSupersets([])
       onFinish(finished)
     } catch (error) {
       alert('Erreur lors de la sauvegarde de la séance')
