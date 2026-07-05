@@ -1,59 +1,36 @@
-// GIF URLs from ExerciseDB (https://exercisedb.dev)
-// Attribution: AscendAPI / ExerciseDB
+// Self-hosted exercise images (see public/exercises/).
+// Source: free-exercise-db (https://github.com/yuhonas/free-exercise-db), public domain.
+// The previous ExerciseDB free CDN (static.exercisedb.dev) was shut down, so images
+// are now bundled locally under public/exercises/<id>.jpg to avoid external dependencies.
+const IMG_BASE = `${import.meta.env.BASE_URL}exercises`
 
-export const EXERCISE_GIFS: Record<string, string> = {
+const EXERCISE_IMAGE_IDS = [
   // Chest
-  'push-ups': 'https://static.exercisedb.dev/media/vptOQ4N.gif', // deep push up
-  'pec-fly': 'https://static.exercisedb.dev/media/v3xmPAR.gif', // lever seated fly (pec deck machine)
-  'dumbbell-decline-fly': 'https://static.exercisedb.dev/media/xXm4nYq.gif', // dumbbell decline fly
-  'assisted-bench-press': 'https://static.exercisedb.dev/media/EIeI8Vf.gif', // barbell bench press
-  'assisted-incline-bench': 'https://static.exercisedb.dev/media/3TZduzM.gif', // barbell incline bench press
-  'chest-press': 'https://static.exercisedb.dev/media/DOoWcnA.gif', // lever chest press
-  'lying-chest-press': 'https://static.exercisedb.dev/media/SpYC0Kp.gif', // dumbbell bench press
-
+  'push-ups', 'pec-fly', 'dumbbell-decline-fly', 'assisted-bench-press',
+  'assisted-incline-bench', 'chest-press', 'lying-chest-press',
   // Biceps
-  'barbell-curl': 'https://static.exercisedb.dev/media/25GPyDY.gif', // barbell curl
-  'dumbbell-preacher-curl': 'https://static.exercisedb.dev/media/jivWf8n.gif', // dumbbell preacher curl
-  'dumbbell-hammer-curl': 'https://static.exercisedb.dev/media/slDvUAU.gif', // dumbbell hammer curl
-  'cable-rope-hammer-curl': 'https://static.exercisedb.dev/media/HPlPoQA.gif', // cable hammer curl with rope
-  'cable-bar-curl': 'https://static.exercisedb.dev/media/G08RZcQ.gif', // cable curl
-
+  'barbell-curl', 'dumbbell-preacher-curl', 'dumbbell-hammer-curl',
+  'cable-rope-hammer-curl', 'cable-bar-curl',
   // Triceps
-  'cable-rope-pushdown': 'https://static.exercisedb.dev/media/dU605di.gif', // cable pushdown with rope
-  'overhead-tricep-extension': 'https://static.exercisedb.dev/media/2IxROQ1.gif', // cable overhead tricep extension rope
-
+  'cable-rope-pushdown', 'overhead-tricep-extension',
   // Back
-  'pull-ups': 'https://static.exercisedb.dev/media/lBDjFxJ.gif', // pull-up
-  'machine-pulldown': 'https://static.exercisedb.dev/media/LEprlgG.gif', // cable lat pulldown full ROM
-  'machine-seated-cable-row': 'https://static.exercisedb.dev/media/fUBheHs.gif', // cable seated row
-  'neutral-pulldown': 'https://static.exercisedb.dev/media/rkg41Fb.gif', // twin handle parallel grip lat pulldown
-  'assisted-narrow-pull-up': 'https://static.exercisedb.dev/media/50BETrz.gif', // biceps narrow pull-ups
-  'machine-neutral-row': 'https://static.exercisedb.dev/media/7I6LNUG.gif', // lever seated row
-
+  'pull-ups', 'machine-pulldown', 'machine-seated-cable-row', 'neutral-pulldown',
+  'assisted-narrow-pull-up', 'machine-neutral-row',
   // Abs
-  'crunch-machine': 'https://static.exercisedb.dev/media/ZnJHhMk.gif', // lever seated crunch
-
+  'crunch-machine',
   // Épaules
-  'dumbbell-lateral-raise': 'https://static.exercisedb.dev/media/DsgkuIt.gif',
-  'cable-lateral-raise': 'https://static.exercisedb.dev/media/goJ6ezq.gif',
-  'cable-one-arm-lateral-raise': 'https://static.exercisedb.dev/media/wEulIzp.gif',
-  'dumbbell-shoulder-press': 'https://static.exercisedb.dev/media/znQUdHY.gif',
-  'machine-shoulder-press': 'https://static.exercisedb.dev/media/67n3r98.gif',
-  'dumbbell-front-raise': 'https://static.exercisedb.dev/media/3eGE2JC.gif',
-  'cable-front-raise': 'https://static.exercisedb.dev/media/u2X71Np.gif',
-  'cable-upright-row': 'https://static.exercisedb.dev/media/cALKspW.gif',
-  'dumbbell-rear-lateral-raise': 'https://static.exercisedb.dev/media/v1qBec9.gif',
-  'dumbbell-upright-row': 'https://static.exercisedb.dev/media/ainizkb.gif',
-  'dumbbell-rear-fly': 'https://static.exercisedb.dev/media/8DiFDVA.gif',
-  'dumbbell-one-arm-shoulder-press': 'https://static.exercisedb.dev/media/84RyJf8.gif',
-  'dumbbell-standing-overhead-press': 'https://static.exercisedb.dev/media/A6wtbuL.gif',
-  'dumbbell-lying-rear-lateral-raise': 'https://static.exercisedb.dev/media/53Ttlck.gif',
-  'dumbbell-scott-press': 'https://static.exercisedb.dev/media/5vfAI0I.gif',
-  'dumbbell-full-can-lateral-raise': 'https://static.exercisedb.dev/media/AQ0mC4Y.gif',
-  'smith-shoulder-press': 'https://static.exercisedb.dev/media/903mzG8.gif',
-  'barbell-upright-row': 'https://static.exercisedb.dev/media/83HoW9X.gif',
-  'lever-one-arm-shoulder-press': 'https://static.exercisedb.dev/media/2KGnL6M.gif',
-}
+  'dumbbell-lateral-raise', 'cable-lateral-raise', 'cable-one-arm-lateral-raise',
+  'dumbbell-shoulder-press', 'machine-shoulder-press', 'dumbbell-front-raise',
+  'cable-front-raise', 'cable-upright-row', 'dumbbell-rear-lateral-raise',
+  'dumbbell-upright-row', 'dumbbell-rear-fly', 'dumbbell-one-arm-shoulder-press',
+  'dumbbell-standing-overhead-press', 'dumbbell-lying-rear-lateral-raise',
+  'dumbbell-scott-press', 'dumbbell-full-can-lateral-raise', 'smith-shoulder-press',
+  'barbell-upright-row', 'lever-one-arm-shoulder-press',
+] as const
+
+export const EXERCISE_GIFS: Record<string, string> = Object.fromEntries(
+  EXERCISE_IMAGE_IDS.map(id => [id, `${IMG_BASE}/${id}.jpg`]),
+)
 
 import { safeParseJSON } from './safe-storage'
 

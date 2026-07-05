@@ -27,6 +27,13 @@ export function SetRowNew({
   const [showDropSetModal, setShowDropSetModal] = useState(false)
   const [dropWeight, setDropWeight] = useState('')
   const [dropReps, setDropReps] = useState('')
+  const [editingDone, setEditingDone] = useState(false)
+
+  const openEditDone = () => {
+    setWeight(set.weight.toString())
+    setReps(set.reps.toString())
+    setEditingDone(true)
+  }
 
   const handleWeightChange = (value: string) => {
     setWeight(value)
@@ -72,11 +79,65 @@ export function SetRowNew({
     }
   }
 
+  // État : VALIDÉE — mode édition
+  if (set.done && editingDone) {
+    return (
+      <div className="space-y-2">
+        <div className="rounded-3xl ring-2 ring-primary bg-surface-light p-3">
+          <div className="flex items-center justify-between mb-3">
+            <span className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-[12px] font-extrabold text-black">
+              S{setNumber}
+            </span>
+            <span className="text-[11px] text-muted font-semibold">Modifier la série validée</span>
+          </div>
+          <div className="flex items-stretch gap-3 mb-3">
+            <div className="flex-1 bg-black rounded-2xl flex flex-col items-center justify-center py-4 ring-1 ring-white/10 min-h-[72px]">
+              <input
+                type="number"
+                step="0.5"
+                value={weight}
+                onChange={(e) => handleWeightChange(e.target.value)}
+                className="text-[34px] font-extrabold leading-none tracking-tight text-center bg-transparent border-none outline-none w-full"
+                style={{ appearance: 'textfield' }}
+              />
+              <span className="text-[12px] text-white/60 font-semibold mt-1">kg</span>
+            </div>
+            <div className="flex items-center text-muted text-[20px] font-bold shrink-0">×</div>
+            <div className="flex-1 bg-black rounded-2xl flex flex-col items-center justify-center py-4 ring-1 ring-white/10 min-h-[72px]">
+              <input
+                type="number"
+                step="1"
+                value={reps}
+                onChange={(e) => handleRepsChange(e.target.value)}
+                className="text-[34px] font-extrabold leading-none tracking-tight text-center bg-transparent border-none outline-none w-full"
+                style={{ appearance: 'textfield' }}
+              />
+              <span className="text-[12px] text-white/60 font-semibold mt-1">reps</span>
+            </div>
+          </div>
+          <button
+            onClick={() => setEditingDone(false)}
+            className="w-full h-12 rounded-2xl bg-primary text-black text-[15px] font-extrabold flex items-center justify-center gap-2 tap-scale transition-transform active:scale-95"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            OK
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   // État : VALIDÉE
   if (set.done) {
     return (
       <div className="space-y-2">
-        <div className="flex items-center gap-2.5 px-3 py-3 rounded-3xl bg-primary/8 ring-1 ring-primary/20 relative">
+        <button
+          onClick={openEditDone}
+          aria-label={`Modifier la série ${setNumber}`}
+          className="w-full flex items-center gap-2.5 px-3 py-3 rounded-3xl bg-primary/8 ring-1 ring-primary/20 relative text-left tap-scale"
+        >
           {isPR && (
             <span className="pr-pulse absolute -top-2 -right-2 z-10 text-[10px] font-extrabold text-black bg-warning px-2 py-0.5 rounded-full">
               🏆 PR
@@ -111,12 +172,17 @@ export function SetRowNew({
               )}
             </div>
           </div>
-          <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shrink-0">
+          <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shrink-0 relative">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
               <path d="m5 13 4 4L19 7" stroke="#0B0F0D" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
+            <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-surface-light ring-1 ring-white/10 flex items-center justify-center">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
+                <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" stroke="#9CA69F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
           </div>
-        </div>
+        </button>
 
         {/* Drops affichées */}
         {set.drops && set.drops.length > 0 && (
